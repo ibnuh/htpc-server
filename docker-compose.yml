@@ -61,6 +61,23 @@ services:
       - ${ROOT}/downloads:/downloads # download folder
     ports:
       - 8989:8989
+  
+  lidarr:
+    container_name: lidarr
+    image: linuxserver/lidarr:latest
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - PUID=${PUID} # default user id, defined in .env
+      - PGID=${PGID} # default group id, defined in .env
+      - TZ=${TZ} # timezone, defined in .env
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${ROOT}/config/lidarr:/config # config files
+      - ${ROOT}/complete/music:/music # tv shows folder
+      - ${ROOT}/downloads:/downloads # download folder
+    ports:
+      - 8686:8686
 
   radarr:
     container_name: radarr
