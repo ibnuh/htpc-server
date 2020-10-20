@@ -10,6 +10,8 @@ Simple home theather PC running on top of docker
 - plex-server
 - bazarr
 - cloudcmd
+- portainer
+- lidarr
 
 ## Running the apps
 Create env config file
