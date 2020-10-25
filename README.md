@@ -12,6 +12,7 @@ Simple home theather PC running on top of docker
 - cloudcmd
 - portainer
 - lidarr
+- samba
 
 ## Running the apps
 Create env config file

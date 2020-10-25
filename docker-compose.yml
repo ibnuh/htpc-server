@@ -61,7 +61,7 @@ services:
       - ${ROOT}/downloads:/downloads # download folder
     ports:
       - 8989:8989
-  
+
   lidarr:
     container_name: lidarr
     image: linuxserver/lidarr:latest
@@ -129,7 +129,7 @@ services:
 
   cloudcmd:
     container_name: cloudcmd
-    image: coderaiser/cloudcmd 
+    image: coderaiser/cloudcmd
     ports:
       - 8000:8000
     volumes:
@@ -144,6 +144,27 @@ services:
       - portainer_data:/data
     ports:
       - 9000:9000
+
+  samba:
+    image: dperson/samba
+    environment:
+      - TZ=${TZ}
+    network_mode: host
+    ports:
+      - "137:137/udp"
+      - "138:138/udp"
+      - "139:139/tcp"
+      - "445:445/tcp"
+    read_only: true
+    tmpfs:
+      - /tmp
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    volumes:
+      - ${ROOT}/complete:/mnt:z
+      - /home/${SAMBA_USERNAME}:/${SAMBA_USERNAME}:z
+    command: '-s "${SAMBA_SHARE_COMPLETE};/mnt;yes;no;no;${SAMBA_USERNAME}" -s "${SAMBA_SHARE_HOME};/${SAMBA_USERNAME};yes;no;no;${SAMBA_USERNAME}" -u "${SAMBA_USERNAME};${SAMBA_PASSWORD}" -p'
 
 volumes:
   portainer_data:
