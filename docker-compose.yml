@@ -127,15 +127,6 @@ services:
     ports:
       - 6767:6767
 
-  cloudcmd:
-    container_name: cloudcmd
-    image: coderaiser/cloudcmd
-    ports:
-      - 8000:8000
-    volumes:
-      - ${ROOT}:/downloads
-      - ${ROOT}/downloads/complete:/downloads/complete/torrent
-
   portainer:
     container_name: portainer
     image: portainer/portainer-ce

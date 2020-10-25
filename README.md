@@ -9,7 +9,6 @@ Simple home theather PC running on top of docker
 - radarr
 - plex-server
 - bazarr
-- cloudcmd
 - portainer
 - lidarr
 - samba
