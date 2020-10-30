@@ -137,6 +137,7 @@ services:
       - 9000:9000
 
   samba:
+    container_name: samba
     image: dperson/samba
     environment:
       - TZ=${TZ}
@@ -157,5 +158,14 @@ services:
       - /home/${SAMBA_USERNAME}:/${SAMBA_USERNAME}:z
     command: '-s "${SAMBA_SHARE_COMPLETE};/mnt;yes;no;no;${SAMBA_USERNAME}" -s "${SAMBA_SHARE_HOME};/${SAMBA_USERNAME};yes;no;no;${SAMBA_USERNAME}" -u "${SAMBA_USERNAME};${SAMBA_PASSWORD}" -p'
 
+  adguardhome:
+    container_name: adguardhome
+    image: adguard/adguardhome:latest
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - ${ROOT}/config/adguardhome/work:/opt/adguardhome/work # config files
+      - ${ROOT}/config/adguardhome/conf:/opt/adguardhome/conf # config files
+ 
 volumes:
   portainer_data:
