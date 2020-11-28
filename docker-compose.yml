@@ -9,8 +9,8 @@ services:
       - PGID=${PGID} # default group id, defined in .env
       - TZ=${TZ} # timezone, defined in .env
     volumes:
-      - ${ROOT}/downloads:/downloads # downloads folder
-      - ${ROOT}/config/deluge:/config # config files
+      - ${DOWNLOAD_ROOT}/downloads:/downloads # downloads folder
+      - ${CONFIG_ROOT}/deluge:/config # config files
     ports:
       - 8112:8112
 
@@ -25,8 +25,8 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${ROOT}/downloads/torrent-blackhole:/downloads # place where to put .torrent files for manual download
-      - ${ROOT}/config/jackett:/config # config files
+      - ${DOWNLOAD_ROOT}/downloads/torrent-blackhole:/downloads # place where to put .torrent files for manual download
+      - ${CONFIG_ROOT}/jackett:/config # config files
     ports:
       - 9117:9117
 
@@ -40,8 +40,8 @@ services:
       - PGID=${PGID} # default group id, defined in .env
       - TZ=${TZ} # timezone, defined in .env
     volumes:
-      - ${ROOT}/downloads:/downloads # download folder
-      - ${ROOT}/config/nzbget:/config # config files
+      - ${DOWNLOAD_ROOT}/downloads:/downloads # download folder
+      - ${CONFIG_ROOT}/nzbget:/config # config files
     ports:
       - 6789:6789
 
@@ -56,9 +56,9 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${ROOT}/config/sonarr:/config # config files
-      - ${ROOT}/complete/tv:/tv # tv shows folder
-      - ${ROOT}/downloads:/downloads # download folder
+      - ${CONFIG_ROOT}/sonarr:/config # config files
+      - ${DOWNLOAD_ROOT}/complete/tv:/tv # tv shows folder
+      - ${DOWNLOAD_ROOT}/downloads:/downloads # download folder
     ports:
       - 8989:8989
 
@@ -73,9 +73,9 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${ROOT}/config/lidarr:/config # config files
-      - ${ROOT}/complete/music:/music # tv shows folder
-      - ${ROOT}/downloads:/downloads # download folder
+      - ${CONFIG_ROOT}/lidarr:/config # config files
+      - ${DOWNLOAD_ROOT}/complete/music:/music # tv shows folder
+      - ${DOWNLOAD_ROOT}/downloads:/downloads # download folder
     ports:
       - 8686:8686
 
@@ -90,9 +90,9 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${ROOT}/config/radarr:/config # config files
-      - ${ROOT}/complete/movies:/movies # movies folder
-      - ${ROOT}/downloads:/downloads # download folder
+      - ${CONFIG_ROOT}/radarr:/config # config files
+      - ${DOWNLOAD_ROOT}/complete/movies:/movies # movies folder
+      - ${DOWNLOAD_ROOT}/downloads:/downloads # download folder
     ports:
       - 7878:7878
 
@@ -104,9 +104,9 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     network_mode: host
     volumes:
-      - ${ROOT}/config/plex/db:/config # plex database
-      - ${ROOT}/config/plex/transcode:/transcode # temp transcoded files
-      - ${ROOT}/complete:/data # media library
+      - ${CONFIG_ROOT}/plex/db:/config # plex database
+      - ${CONFIG_ROOT}/plex/transcode:/transcode # temp transcoded files
+      - ${DOWNLOAD_ROOT}/complete:/data # media library
     ports:
       - 32400:32400
 
@@ -121,9 +121,9 @@ services:
       - TZ=${TZ} # timezone, defined in .env
       - UMASK_SET=022 #optional
     volumes:
-      - ${ROOT}/config/bazarr:/config # config files
-      - ${ROOT}/complete/movies:/movies # movies folder
-      - ${ROOT}/complete/tv:/tv # tv shows folder
+      - ${CONFIG_ROOT}/bazarr:/config # config files
+      - ${DOWNLOAD_ROOT}/complete/movies:/movies # movies folder
+      - ${DOWNLOAD_ROOT}/complete/tv:/tv # tv shows folder
     ports:
       - 6767:6767
 
@@ -154,7 +154,7 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ${ROOT}/complete:/mnt:z
+      - ${DOWNLOAD_ROOT}/complete:/mnt:z
       - /home/${SAMBA_USERNAME}:/${SAMBA_USERNAME}:z
     command: '-s "${SAMBA_SHARE_COMPLETE};/mnt;yes;no;no;${SAMBA_USERNAME}" -s "${SAMBA_SHARE_HOME};/${SAMBA_USERNAME};yes;no;no;${SAMBA_USERNAME}" -u "${SAMBA_USERNAME};${SAMBA_PASSWORD}" -p'
 
@@ -164,8 +164,18 @@ services:
     network_mode: host
     restart: unless-stopped
     volumes:
-      - ${ROOT}/config/adguardhome/work:/opt/adguardhome/work # config files
-      - ${ROOT}/config/adguardhome/conf:/opt/adguardhome/conf # config files
- 
+      - ${CONFIG_ROOT}/adguardhome/work:/opt/adguardhome/work # config files
+      - ${CONFIG_ROOT}/adguardhome/conf:/opt/adguardhome/conf # config files
+
+  homeassistant:
+    container_name: home-assistant
+    image: homeassistant/home-assistant:stable
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_ROOT}/homeassistant:/config
+    restart: unless-stopped
+    network_mode: host
+
 volumes:
   portainer_data:
