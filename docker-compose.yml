@@ -167,5 +167,15 @@ services:
       - ${CONFIG_ROOT}/adguardhome/work:/opt/adguardhome/work # config files
       - ${CONFIG_ROOT}/adguardhome/conf:/opt/adguardhome/conf # config files
 
+  homeassistant:
+    container_name: home-assistant
+    image: homeassistant/home-assistant:stable
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_ROOT}/homeassistant:/config
+    restart: unless-stopped
+    network_mode: host
+
 volumes:
   portainer_data:
