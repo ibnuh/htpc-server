@@ -93,6 +93,7 @@ services:
       - ${CONFIG_ROOT}/radarr:/config # config files
       - ${DOWNLOAD_ROOT}/complete/movies:/movies # movies folder
       - ${DOWNLOAD_ROOT}/downloads:/downloads # download folder
+      - ${DOWNLOAD_ROOT}/complete/misc:/misc # download folder
     ports:
       - 7878:7878
 
@@ -126,15 +127,6 @@ services:
       - ${DOWNLOAD_ROOT}/complete/tv:/tv # tv shows folder
     ports:
       - 6767:6767
-
-  portainer:
-    container_name: portainer
-    image: portainer/portainer-ce
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
-    ports:
-      - 9000:9000
 
   samba:
     container_name: samba
