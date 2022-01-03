@@ -1,5 +1,19 @@
 version: "3.4"
 services:
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent
+    container_name: qbittorrent
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Asia/Jakarta
+      - WEBUI_PORT=8080
+    volumes:
+      - ${CONFIG_ROOT}/qBittorrent:/config
+      - ${DOWNLOAD_ROOT}/downloads:/downloads # downloads folder
+    restart: unless-stopped
+    network_mode: host
+
   deluge:
     container_name: deluge
     image: linuxserver/deluge:latest
@@ -10,9 +24,8 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - ${DOWNLOAD_ROOT}/downloads:/downloads # downloads folder
-      - ${CONFIG_ROOT}/deluge:/config # config files
-    ports:
-      - 8112:8112
+      - ${CONFIG_ROOT}/delugev2:/config # config files
+    network_mode: host
 
   jackett:
     container_name: jackett
@@ -116,7 +129,8 @@ services:
     volumes:
       - ${DOWNLOAD_ROOT}/complete:/mnt:z
       - /home/${SAMBA_USERNAME}:/${SAMBA_USERNAME}:z
-    command: '-s "${SAMBA_SHARE_COMPLETE};/mnt;yes;no;no;${SAMBA_USERNAME}" -s "${SAMBA_SHARE_HOME};/${SAMBA_USERNAME};yes;no;no;${SAMBA_USERNAME}" -u "${SAMBA_USERNAME};${SAMBA_PASSWORD}" -p'
+      - ${DOWNLOAD_ROOT}:/gg:z
+    command: '-s "${SAMBA_SHARE_ALL};/gg;yes;no;no;${SAMBA_USERNAME}" -s "${SAMBA_SHARE_COMPLETE};/mnt;yes;no;no;${SAMBA_USERNAME}" -s "${SAMBA_SHARE_HOME};/${SAMBA_USERNAME};yes;no;no;${SAMBA_USERNAME}" -u "${SAMBA_USERNAME};${SAMBA_PASSWORD}" -p'
 
   adguardhome:
     container_name: adguardhome
@@ -135,4 +149,23 @@ services:
     volumes:
       - ${CONFIG_ROOT}/homeassistant:/config
     restart: unless-stopped
+
+  file-browser:
+    container_name: file-browser
+    image: filebrowser/filebrowser
     network_mode: host
+    user: 0:0
+    restart: unless-stopped
+    volumes:
+      - ${DOWNLOAD_ROOT}/complete:/srv # downloads folder
+      - ${CONFIG_ROOT}/file-browser/filebrowser.db:/database.db # config files
+
+  motioneye:
+    image: ccrisan/motioneye:master-amd64
+    ports:
+      - "8081:8081"
+      - "8765:8765"
+    volumes:
+      - ${DOWNLOAD_ROOT}/motioneye:/etc/motioneye
+      - ${CONFIG_ROOT}/motioneye:/var/lib/motioneye
+      - /mnt/join/complete/cam:/mnt/cam
